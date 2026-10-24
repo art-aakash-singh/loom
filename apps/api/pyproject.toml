@@ -3,9 +3,14 @@ name = "loom-api"
 version = "0.0.0"
 requires-python = ">=3.13"
 dependencies = [
+    "alembic>=1.20.1",
     "anthropic>=1.17.0",
+    "anyio>=4.15.1",
+    "asyncpg>=0.32.0",
     "fastapi>=0.115",
     "pydantic-settings>=2.6",
+    "redis>=8.1.0",
+    "sqlalchemy[asyncio]>=2.0",
     "uvicorn[standard]>=0.32",
 ]
 

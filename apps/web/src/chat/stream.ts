@@ -1,9 +1,11 @@
 import type { components } from "../api/schema";
+import { GenerationInProgressError } from "./errors";
 
-export type ChatRequest = components["schemas"]["ChatRequest"];
+export type SendMessageRequest = components["schemas"]["SendMessageRequest"];
 
 // SSE events aren't described by OpenAPI, so these mirror chat/schemas.py by hand.
 export type ChatEvent =
+  | { type: "turn_started"; user_message_id: string; assistant_message_id: string }
   | { type: "text_delta"; text: string }
   | {
       type: "message_end";
@@ -20,14 +22,19 @@ export type ChatEvent =
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
 /** Parse `data: <json>\n\n` frames; chunk boundaries can fall anywhere, so buffer. */
-export async function* streamChat(message: string, signal: AbortSignal): AsyncGenerator<ChatEvent> {
-  const body: ChatRequest = { message };
-  const response = await fetch(`${API_URL}/chat`, {
+export async function* streamChat(
+  conversationId: string,
+  text: string,
+  signal: AbortSignal,
+): AsyncGenerator<ChatEvent> {
+  const body: SendMessageRequest = { text };
+  const response = await fetch(`${API_URL}/conversations/${conversationId}/messages`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
     signal,
   });
+  if (response.status === 409) throw new GenerationInProgressError();
   if (!response.ok || !response.body) {
     throw new Error(`Request failed (HTTP ${response.status})`);
   }

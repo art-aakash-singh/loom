@@ -22,6 +22,10 @@ infra:
 infra-down:
     docker compose down
 
+# Apply database migrations (run after `just infra`)
+migrate:
+    uv run alembic -c apps/api/alembic.ini upgrade head
+
 test:
     uv run pytest
     pnpm --filter web test

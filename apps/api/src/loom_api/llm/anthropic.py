@@ -1,5 +1,5 @@
 import logging
-from collections.abc import AsyncIterator, Sequence
+from collections.abc import AsyncGenerator, Sequence
 
 import anthropic
 from anthropic import AsyncAnthropic
@@ -54,7 +54,7 @@ class AnthropicProvider:
 
     async def stream(
         self, system: str, messages: Sequence[Message], settings: GenerationSettings
-    ) -> AsyncIterator[StreamEvent]:
+    ) -> AsyncGenerator[StreamEvent]:
         try:
             async with self._client.messages.stream(
                 model=settings.model,

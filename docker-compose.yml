@@ -5,7 +5,8 @@ services:
       POSTGRES_USER: loom
       POSTGRES_PASSWORD: loom
       POSTGRES_DB: loom
-    ports: ["5432:5432"]
+    # Host port 5433: a Homebrew Postgres commonly owns 5432 and shadows the container.
+    ports: ["5433:5432"]
     volumes: [pgdata:/var/lib/postgresql/data]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U loom"]
@@ -14,7 +15,7 @@ services:
 
   redis:
     image: redis:7
-    ports: ["6379:6379"]
+    ports: ["6380:6379"]  # 6380 for the same reason as Postgres above
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
