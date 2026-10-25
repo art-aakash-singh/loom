@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .g{fill:#F1E9DC}.wa{fill:#2F4A6B}.we{fill:#B04A2E}.s{stroke:#F1E9DC}
+    @media (prefers-color-scheme:dark){.g{fill:#2A2420}.wa{fill:#F1E9DC}.we{fill:#D7714F}.s{stroke:#2A2420}}
+  </style>
+  <rect class="g" width="32" height="32" rx="7"/>
+  <g transform="translate(4.2 4.2) scale(0.1)">
+    <g class="we"><rect y="42" width="224" height="28" rx="14"/><rect y="98" width="224" height="28" rx="14"/><rect y="154" width="224" height="28" rx="14"/></g>
+    <g class="s" stroke-width="10">
+      <g class="wa"><rect x="42" width="28" height="224" rx="14"/><rect x="98" width="28" height="224" rx="14"/><rect x="154" width="28" height="224" rx="14"/></g>
+      <g class="we"><rect x="92" y="42" width="40" height="28"/><rect x="92" y="154" width="40" height="28"/><rect x="36" y="98" width="40" height="28"/><rect x="148" y="98" width="40" height="28"/></g>
+    </g>
+  </g>
+</svg>

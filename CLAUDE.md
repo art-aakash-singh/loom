@@ -14,10 +14,14 @@ A ChatGPT-style AI product built to learn how such systems work from the inside.
 - `just setup` – install Python + JS deps
 - `just dev` – start Postgres/Redis, then API (:8000) and web (:5173)
 - `just test` / `just lint` / `just fmt`
-- `just gen-client` – dump OpenAPI from FastAPI → regenerate `apps/web/src/api/schema.d.ts`. Re-run after any API schema change; never hand-edit the generated file.
+- `just gen-client` – dump OpenAPI from FastAPI → regenerate `apps/web/src/api/generated/schema.d.ts`. Re-run after any API schema change; never hand-edit the generated file.
 
 ## Layering rule
 `routers → services → repositories`. Routers do HTTP only (parse, call a service, shape the response). Services hold business logic and never import FastAPI. Repositories are the only layer that touches Postgres/Redis. Dependencies point downward only.
+
+## Web layout (`apps/web/src`)
+`app/` composes, `features/<name>/` own a vertical slice (`api/`, `components/`, `utils/`, `types.ts`, public `index.ts`), shared code lives in `api/generated/`, `lib/` (configured instances), `config/` (the only `import.meta.env` reader), `testing/`.
+Dependencies point one way: shared → features → app. Features never import each other, and `app/` imports a feature only via its `index.ts`. `eslint-plugin-boundaries` enforces this in `just lint`; fix the import, don't disable the rule. Components never call the generated client directly: go through the feature's `api/`.
 
 ## Conventions
 - Everything on the request path is `async`; no blocking calls on the event loop.

@@ -24,7 +24,24 @@ line-length = 100
 target-version = "py313"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "B", "UP", "ASYNC", "SIM"]
+select = ["E", "F", "I", "B", "UP", "ASYNC", "SIM", "TID251"]
+
+# The pure half of context building and tree navigation: no I/O, no clock. These modules
+# must be functions of their arguments so tests can pin every input.
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"sqlalchemy".msg = "pure module: no database access (load data in context/gather.py)"
+"loom_api.db".msg = "pure module: no database access (load data in context/gather.py)"
+"loom_api.chat.models".msg = "pure module: no ORM rows (use the context/types.py values)"
+"loom_api.chat.repository".msg = "pure module: no database access (load data in context/gather.py)"
+"loom_api.context.gather".msg = "pure module: gather does the I/O and calls you, not the reverse"
+"datetime.datetime.now".msg = "pure module: take the time from ContextInput.now"
+"datetime.datetime.utcnow".msg = "pure module: take the time from ContextInput.now"
+"datetime.date.today".msg = "pure module: take the time from ContextInput.now"
+"time.time".msg = "pure module: take the time from ContextInput.now"
+
+[tool.ruff.lint.per-file-ignores]
+# The ban applies only to the pure modules: every other file may use these APIs.
+"!**/loom_api/{context/build,context/budget,chat/tree}.py" = ["TID251"]
 
 [tool.mypy]
 strict = true

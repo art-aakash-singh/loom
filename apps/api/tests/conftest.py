@@ -8,9 +8,9 @@ from alembic.config import Config
 from httpx import ASGITransport, AsyncClient
 from loom_api.chat.lock import GenerationLock
 from loom_api.chat.repository import ChatRepository
-from loom_api.chat.schemas import ConcreteGenerationSettings
 from loom_api.chat.service import ChatService
 from loom_api.config import settings
+from loom_api.context.types import GenerationSettings
 from loom_api.db import create_session_factory
 from loom_api.deps import get_chat_service
 from loom_api.llm.base import LLMProvider
@@ -19,10 +19,24 @@ from redis.asyncio import Redis
 from sqlalchemy import text
 from sqlalchemy.engine import make_url
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
+from support import passthrough_build
 
 ALEMBIC_INI = Path(__file__).parents[1] / "alembic.ini"
 
 UseProvider = Callable[[LLMProvider], ChatService]
+
+GENERATION_SETTINGS = GenerationSettings(model="fake", max_output_tokens=100, context_window=10_000)
+
+
+@pytest.fixture(autouse=True)
+def stand_in_build(monkeypatch: pytest.MonkeyPatch) -> None:
+    """TODO(human): delete this fixture once context/build.py is implemented.
+
+    build() is a stub that raises NotImplementedError, so every reply would end in an
+    'unexpected' error. Until it is real, chat tests run against support.passthrough_build.
+    Tests that need a specific build() monkeypatch over this one.
+    """
+    monkeypatch.setattr("loom_api.chat.service.build", passthrough_build)
 
 
 async def _create_database_if_missing(url: str) -> None:
@@ -39,12 +53,25 @@ async def _create_database_if_missing(url: str) -> None:
         await admin.dispose()
 
 
+async def _empty_tables_if_present(url: str) -> None:
+    # Downgrading past 0003 cannot squeeze a branched tree back into the linear-chain
+    # indexes, and a previous run may have left branches behind. The data is disposable.
+    engine = create_async_engine(url)
+    try:
+        async with engine.begin() as conn:
+            if await conn.scalar(text("SELECT to_regclass('messages') IS NOT NULL")):
+                await conn.execute(text("TRUNCATE conversations, messages"))
+    finally:
+        await engine.dispose()
+
+
 @pytest.fixture(scope="session")
 def test_database_url() -> str:
     """Build the test schema from scratch with the real migrations, once per run."""
     url = settings.test_database_url
     assert url != settings.database_url, "refusing to run destructive tests on the dev database"
     asyncio.run(_create_database_if_missing(url))
+    asyncio.run(_empty_tables_if_present(url))
     config = Config(str(ALEMBIC_INI))
     config.attributes["url"] = url
     command.downgrade(config, "base")
@@ -87,9 +114,7 @@ def use_provider(repo: ChatRepository, lock: GenerationLock) -> Iterator[UseProv
     """Build a ChatService around `provider` and serve it from the app."""
 
     def _use(provider: LLMProvider) -> ChatService:
-        service = ChatService(
-            repo, lock, provider, ConcreteGenerationSettings(model="fake", max_tokens=100)
-        )
+        service = ChatService(repo, lock, provider, GENERATION_SETTINGS)
         app.dependency_overrides[get_chat_service] = lambda: service
         return service
 

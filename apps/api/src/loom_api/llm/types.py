@@ -49,7 +49,11 @@ class Message:
 StreamEvent = TextDelta | MessageEnd | StreamError
 
 
-@dataclass(frozen=True)
 class GenerationSettings(Protocol):
-    model: str
-    max_tokens: int
+    """What a provider needs per request. Read-only, so any frozen settings object fits."""
+
+    @property
+    def model(self) -> str: ...
+
+    @property
+    def max_output_tokens(self) -> int: ...

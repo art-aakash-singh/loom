@@ -1,98 +1,43 @@
 import asyncio
 import logging
-from collections.abc import AsyncGenerator, Sequence
-from typing import Any
+from collections.abc import AsyncGenerator
+from typing import Any, cast
 from uuid import UUID, uuid4
 
 import pytest
-from conftest import UseProvider
+from conftest import GENERATION_SETTINGS, UseProvider
 from httpx import AsyncClient
-from loom_api.chat.lock import lock_key
-from loom_api.chat.records import MessageRecord
+from loom_api.chat.lock import GenerationLock
 from loom_api.chat.repository import ChatRepository
 from loom_api.chat.router import _sse
 from loom_api.chat.schemas import ChatEvent, TextDeltaEvent
+from loom_api.chat.service import CONTEXT_TOO_LARGE_MESSAGE, ChatService
+from loom_api.context.build import build as real_build
+from loom_api.context.types import ContextInput, ContextTooLarge, ProviderRequest
+from loom_api.llm.estimate import estimate_tokens_by_chars
 from loom_api.llm.fake import FakeProvider
-from loom_api.llm.types import (
-    GenerationSettings,
-    Message,
-    MessageEnd,
-    StreamError,
-    StreamEvent,
-    TextDelta,
-    Usage,
-)
+from loom_api.llm.types import StreamError, TextDelta, Usage
 from loom_api.main import app
 from redis.asyncio import Redis
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
-from support import eventually, parse_sse, post_then_disconnect
-
-FULL_REPLY = "Hello from the fake provider. This is a streamed reply."
-
-
-class ScriptedProvider:
-    def __init__(self, *events: StreamEvent) -> None:
-        self._events = events
-        self.seen: list[Sequence[Message]] = []
-
-    async def stream(
-        self, system: str, messages: Sequence[Message], settings: GenerationSettings
-    ) -> AsyncGenerator[StreamEvent]:
-        self.seen.append(messages)
-        for event in self._events:
-            yield event
-
-
-class GatedProvider:
-    """Emits one delta, then waits until the test lets it finish."""
-
-    def __init__(self) -> None:
-        self.started = asyncio.Event()
-        self.release = asyncio.Event()
-
-    async def stream(
-        self, system: str, messages: Sequence[Message], settings: GenerationSettings
-    ) -> AsyncGenerator[StreamEvent]:
-        yield TextDelta("partial")
-        self.started.set()
-        await self.release.wait()
-        yield MessageEnd("complete", Usage(3, 4))
-
-
-async def create_conversation(client: AsyncClient) -> UUID:
-    response = await client.post("/conversations")
-    assert response.status_code == 201
-    assert response.json()["current_leaf_id"] is None
-    return UUID(response.json()["id"])
-
-
-async def send(client: AsyncClient, cid: UUID, text: str = "hi") -> tuple[int, str]:
-    response = await client.post(f"/conversations/{cid}/messages", json={"text": text})
-    return response.status_code, response.text
-
-
-async def get_conversation(client: AsyncClient, cid: UUID) -> dict[str, Any]:
-    response = await client.get(f"/conversations/{cid}")
-    assert response.status_code == 200
-    body: dict[str, Any] = response.json()
-    return body
-
-
-async def get_messages(client: AsyncClient, cid: UUID) -> list[dict[str, Any]]:
-    messages: list[dict[str, Any]] = (await get_conversation(client, cid))["messages"]
-    return messages
-
-
-async def active_path(repo: ChatRepository, cid: UUID) -> list[MessageRecord]:
-    conversation = await repo.get_conversation(cid)
-    assert conversation is not None
-    leaf = conversation.current_leaf_id
-    return await repo.path_to(leaf) if leaf else []
-
-
-async def lock_is_free(redis: Redis, cid: UUID) -> bool:
-    return not await redis.exists(lock_key(cid))
+from support import (
+    FULL_REPLY,
+    PARTIAL_REPLY,
+    GatedProvider,
+    ScriptedProvider,
+    active_path,
+    create_conversation,
+    eventually,
+    get_conversation,
+    get_messages,
+    lock_is_free,
+    ok_provider,
+    parse_sse,
+    passthrough_build,
+    post_then_disconnect,
+    send,
+)
 
 
 async def test_two_turns_form_a_chain_and_advance_the_leaf(
@@ -112,6 +57,7 @@ async def test_two_turns_form_a_chain_and_advance_the_leaf(
     assert messages[0]["parent_id"] is None
     for parent, child in zip(messages, messages[1:], strict=False):
         assert child["parent_id"] == parent["id"]
+        assert child["sibling_ids"] == [child["id"]]  # no branches yet
     assert conversation["current_leaf_id"] == messages[-1]["id"]
 
     user, assistant = messages[:2]
@@ -133,22 +79,97 @@ async def test_two_turns_form_a_chain_and_advance_the_leaf(
     assert assistant["created_at"] <= assistant["finished_at"]
 
 
-async def test_history_sent_to_the_provider_is_the_path_to_the_new_user_message(
+async def test_token_counts_are_estimated_for_users_and_reported_for_finished_replies(
     client: AsyncClient, use_provider: UseProvider
 ) -> None:
-    provider = ScriptedProvider(TextDelta("ok"), MessageEnd("complete", Usage(1, 1)))
-    use_provider(provider)
+    use_provider(ok_provider())  # reports output_tokens=7 for a 2-character reply
+    cid = await create_conversation(client)
+
+    await send(client, cid, "x" * 41)
+    user, assistant = await get_messages(client, cid)
+
+    assert user["token_count"] == 11  # ceil(41 / 4)
+    assert assistant["token_count"] == 7  # the provider's count, not an estimate
+
+
+async def test_gather_hands_build_the_path_up_to_the_new_user_message(
+    client: AsyncClient, use_provider: UseProvider, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    seen: list[ContextInput] = []
+
+    def capturing_build(inp: ContextInput) -> ProviderRequest:
+        seen.append(inp)
+        return passthrough_build(inp)
+
+    monkeypatch.setattr("loom_api.chat.service.build", capturing_build)
+    use_provider(ok_provider())
     cid = await create_conversation(client)
 
     await send(client, cid, "one")
     await send(client, cid, "two")
 
-    # The new reply's own (empty, streaming) row is not part of its context.
-    assert provider.seen[-1] == [
-        Message("user", "one"),
-        Message("assistant", "ok"),
-        Message("user", "two"),
+    inp = seen[-1]
+    # The reply being generated (empty, streaming) is not part of its own context.
+    assert [(m.role, m.status) for m in inp.path] == [
+        ("user", "complete"),
+        ("assistant", "complete"),
+        ("user", "complete"),
     ]
+    assert inp.path[-1].content == ({"type": "text", "text": "two"},)
+    assert all(m.token_count >= 1 for m in inp.path)
+    assert inp.now.tzinfo is not None
+    assert inp.settings == GENERATION_SETTINGS
+
+
+async def test_context_too_large_ends_the_turn_with_invalid_request(
+    client: AsyncClient,
+    use_provider: UseProvider,
+    repo: ChatRepository,
+    redis: Redis,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def too_large(inp: ContextInput) -> ProviderRequest:
+        raise ContextTooLarge("needs 12000 tokens, window is 10000")
+
+    monkeypatch.setattr("loom_api.chat.service.build", too_large)
+    provider = ok_provider()
+    use_provider(provider)
+    cid = await create_conversation(client)
+
+    status, body = await send(client, cid)
+    events = parse_sse(body)
+
+    assert status == 200
+    assert [e["type"] for e in events] == ["turn_started", "error"]
+    assert events[-1] == {
+        "type": "error",
+        "kind": "invalid_request",
+        "message": CONTEXT_TOO_LARGE_MESSAGE,
+        "retryable": False,
+    }
+    assert provider.seen == []  # the model was never called
+    _, assistant = await active_path(repo, cid)
+    assert assistant.status == "error"
+    assert assistant.error_kind == "invalid_request"
+    assert assistant.content == []
+    assert assistant.token_count == 0
+    assert await lock_is_free(redis, cid)
+
+
+async def test_the_real_build_drives_a_turn_end_to_end(
+    client: AsyncClient, use_provider: UseProvider, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr("loom_api.chat.service.build", real_build)
+    provider = ok_provider()
+    use_provider(provider)
+    cid = await create_conversation(client)
+
+    _, body = await send(client, cid)
+    _, assistant = await get_messages(client, cid)
+
+    assert parse_sse(body)[-1]["type"] == "message_end"
+    assert assistant["status"] == "complete"
+    assert [m.role for m in provider.seen[0]] == ["user"]
 
 
 async def test_stream_error_mid_stream_stores_error_row_with_partial_content(
@@ -166,7 +187,9 @@ async def test_stream_error_mid_stream_stores_error_row_with_partial_content(
     assert assistant["stop_reason"] is None
     assert assistant["usage"] is None
     assert assistant["finished_at"] is not None
-    assert assistant["content"] == [{"type": "text", "text": "Hello from the fake"}]
+    assert assistant["content"] == [{"type": "text", "text": PARTIAL_REPLY}]
+    # No usage on an error, so the partial text is estimated.
+    assert assistant["token_count"] == estimate_tokens_by_chars(PARTIAL_REPLY)
 
 
 async def test_stream_error_before_first_delta_stores_error_row_with_empty_content(
@@ -181,6 +204,7 @@ async def test_stream_error_before_first_delta_stores_error_row_with_empty_conte
     assert assistant["status"] == "error"
     assert assistant["error_kind"] == "overloaded"
     assert assistant["content"] == []
+    assert assistant["token_count"] == 0
 
 
 async def test_provider_ending_without_terminal_event_is_recorded_as_error(
@@ -220,8 +244,9 @@ async def test_client_disconnect_mid_stream_stores_cancelled_row_with_partial_co
     assert assistant.error_kind is None
     assert assistant.finished_at is not None
     (block,) = assistant.content
-    assert block["text"].startswith("Hello from")
+    assert FULL_REPLY.startswith(block["text"])
     assert block["text"] != FULL_REPLY
+    assert assistant.token_count == estimate_tokens_by_chars(block["text"])
 
 
 async def test_cancellation_propagates_out_of_the_generation(
@@ -277,22 +302,34 @@ async def test_concurrent_send_gets_409_while_a_reply_is_streaming(
     assert await lock_is_free(redis, cid)
 
 
-async def test_concurrent_turn_starts_queue_on_the_row_lock_instead_of_branching(
+class AlwaysFreeLock:
+    """Simulates the Redis lock failing open (TTL expiry, failover)."""
+
+    async def acquire(self, conversation_id: UUID) -> str:
+        return "token"
+
+    async def release(self, conversation_id: UUID, token: str) -> bool:
+        return True
+
+
+async def test_concurrent_sends_queue_on_the_row_lock_instead_of_branching(
     repo: ChatRepository,
 ) -> None:
-    """Below the Redis lock: if it ever lets two sends through (TTL expiry, Redis failover),
-    SELECT ... FOR UPDATE must still produce one linear chain."""
+    """Below the Redis lock: if it ever lets two sends through, SELECT ... FOR UPDATE must
+    still chain them. Without it both read the same current_leaf_id and branch."""
+    service = ChatService(
+        repo, cast(GenerationLock, AlwaysFreeLock()), ok_provider(), GENERATION_SETTINGS
+    )
     cid = (await repo.create_conversation()).id
 
-    turns = await asyncio.gather(*(repo.start_turn(cid, f"q{i}", model="fake") for i in range(5)))
+    generations = await asyncio.gather(*(service.send_message(cid, f"q{i}") for i in range(5)))
 
     path = await active_path(repo, cid)
     assert len(path) == 10
     assert [m.role for m in path] == ["user", "assistant"] * 5
     for parent, child in zip(path, path[1:], strict=False):
         assert child.parent_id == parent.id
-    # Each later turn's user message hangs off the previous turn's reply.
-    replies = {assistant.id for _, assistant in turns}
+    replies = {g.assistant_message.id for g in generations}
     assert all(m.parent_id in replies for m in path[2::2])
 
 
@@ -323,8 +360,8 @@ async def test_startup_sweep_closes_stuck_streaming_rows(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     service = use_provider(FakeProvider(delay_s=0))
-    cid = (await repo.create_conversation()).id
-    _, stuck = await repo.start_turn(cid, "the process died here", model="fake")
+    stuck_cid = await create_conversation(client)
+    stuck = await service.send_message(stuck_cid, "the process died here")  # never streamed
     healthy = await create_conversation(client)
     await send(client, healthy)
 
@@ -333,27 +370,32 @@ async def test_startup_sweep_closes_stuck_streaming_rows(
 
     assert swept == 1
     assert "marked 1 interrupted" in caplog.text
-    _, assistant = await active_path(repo, cid)
-    assert assistant.id == stuck.id
+    _, assistant = await active_path(repo, stuck_cid)
+    assert assistant.id == stuck.assistant_message.id
     assert assistant.status == "error"
     assert assistant.error_kind == "unexpected"
+    assert assistant.token_count == 0
     assert assistant.finished_at is not None
     assert (await get_messages(client, healthy))[-1]["status"] == "complete"
     assert await service.sweep_interrupted_generations() == 0
 
 
-async def test_finalize_does_not_overwrite_a_swept_row(repo: ChatRepository) -> None:
-    cid = (await repo.create_conversation()).id
-    _, assistant = await repo.start_turn(cid, "hi", model="fake")
+async def test_finalize_does_not_overwrite_a_swept_row(
+    client: AsyncClient, use_provider: UseProvider, repo: ChatRepository
+) -> None:
+    service = use_provider(FakeProvider(delay_s=0))
+    cid = await create_conversation(client)
+    generation = await service.send_message(cid, "hi")
     await repo.fail_streaming_messages()
 
     written = await repo.finalize_assistant(
-        assistant.id,
+        generation.assistant_message.id,
         status="complete",
         content=[{"type": "text", "text": "late"}],
         stop_reason="complete",
         error_kind=None,
         usage=Usage(1, 1),
+        token_count=1,
     )
 
     assert not written
@@ -414,25 +456,24 @@ async def test_empty_message_is_rejected(client: AsyncClient, use_provider: UseP
     assert (await send(client, cid, ""))[0] == 422
 
 
-async def test_history_load_failure_closes_the_reply_and_frees_the_lock(
+async def test_history_load_failure_ends_the_turn_and_frees_the_lock(
     client: AsyncClient,
     use_provider: UseProvider,
     repo: ChatRepository,
     redis: Redis,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    service = use_provider(FakeProvider(delay_s=0))
+    use_provider(FakeProvider(delay_s=0))
     cid = await create_conversation(client)
-    real_path_to = repo.path_to
 
-    async def broken_path_to(_: UUID) -> list[MessageRecord]:
+    async def broken_path_to(_: UUID) -> list[Any]:
         raise RuntimeError("database is down")
 
-    monkeypatch.setattr(repo, "path_to", broken_path_to)
-    with pytest.raises(RuntimeError):
-        await service.send_message(cid, "hi")
-    monkeypatch.setattr(repo, "path_to", real_path_to)
+    with monkeypatch.context() as patch:
+        patch.setattr(repo, "path_to", broken_path_to)
+        _, body = await send(client, cid)
 
+    assert parse_sse(body)[-1]["kind"] == "unexpected"
     _, assistant = await active_path(repo, cid)
     assert assistant.status == "error"
     assert assistant.error_kind == "unexpected"
@@ -503,6 +544,7 @@ async def test_conversation_can_be_created_with_a_title(
 
     assert titled.status_code == 201
     assert titled.json()["title"] == "Trip plans"
+    assert titled.json()["current_leaf_id"] is None
     assert blank.json()["title"] is None
     assert no_body.json()["title"] is None
     assert too_long.status_code == 422

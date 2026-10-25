@@ -1,0 +1,168 @@
+/* Lives on the indigo sidebar: every colour here comes from the --side-* tokens. */
+.convs {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.convs-top {
+  padding: 0 14px 10px;
+}
+
+.convs-new {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--side-rule);
+  border-radius: var(--radius-m);
+  background: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 150ms var(--ease-out);
+}
+
+.convs-new:hover {
+  background: var(--side-bg-hover);
+}
+
+.convs-create {
+  display: grid;
+  gap: 8px;
+}
+
+.convs-create input {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--side-rule);
+  border-radius: var(--radius-m);
+  background: rgb(0 0 0 / 0.14);
+  caret-color: var(--side-weft);
+}
+
+.convs-create input::placeholder {
+  color: var(--side-ink-2);
+}
+
+.convs-create input:focus-visible {
+  outline-offset: 0;
+}
+
+.convs-create-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.convs-btn {
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-s);
+  background: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--side-ink-2);
+}
+
+.convs-btn:hover:not(:disabled) {
+  background: var(--side-bg-hover);
+  color: var(--side-ink);
+}
+
+.convs-btn-solid,
+.convs-btn-solid:hover:not(:disabled) {
+  background: var(--side-ink);
+  color: var(--side-bg);
+}
+
+.convs-btn:disabled {
+  opacity: 0.6;
+}
+
+.convs-error {
+  margin: 0;
+  font-size: 13px;
+  color: #f6c4b4;
+}
+
+.convs-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px 14px 16px;
+  scrollbar-color: var(--side-rule) transparent;
+}
+
+.convs-empty {
+  margin: 12px 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--side-ink-2);
+}
+
+.convs-group + .convs-group {
+  margin-top: 14px;
+}
+
+.convs-group h2 {
+  margin: 10px 10px 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--side-ink-2);
+}
+
+.convs-group ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The selected item gets a short madder weft thread across its start, echoing the mark. */
+.convs-item {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: var(--radius-s);
+  background: none;
+  text-align: left;
+  font-size: 14px;
+  color: var(--side-ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition:
+    background-color 150ms var(--ease-out),
+    color 150ms var(--ease-out),
+    padding-left 200ms var(--ease-out);
+}
+
+.convs-item:hover {
+  background: var(--side-bg-hover);
+  color: var(--side-ink);
+}
+
+.convs-item[aria-current="true"] {
+  padding-left: 26px;
+  background: var(--side-bg-active);
+  color: var(--side-ink);
+  font-weight: 500;
+}
+
+.convs-item[aria-current="true"]::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  width: 9px;
+  height: 4px;
+  margin-top: -2px;
+  border-radius: 2px;
+  background: var(--side-weft);
+}

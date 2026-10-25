@@ -4,6 +4,7 @@ from collections.abc import AsyncGenerator, Sequence
 import anthropic
 from anthropic import AsyncAnthropic
 
+from loom_api.llm.estimate import estimate_tokens_by_chars
 from loom_api.llm.types import (
     ErrorKind,
     GenerationSettings,
@@ -52,13 +53,18 @@ class AnthropicProvider:
     def __init__(self, api_key: str):
         self._client = AsyncAnthropic(api_key=api_key)
 
+    def estimate_tokens(self, text: str) -> int:
+        # Planned: the real count from the messages.count_tokens endpoint. That is a network
+        # call, so this method (and its callers) will have to become async when it lands.
+        return estimate_tokens_by_chars(text)
+
     async def stream(
         self, system: str, messages: Sequence[Message], settings: GenerationSettings
     ) -> AsyncGenerator[StreamEvent]:
         try:
             async with self._client.messages.stream(
                 model=settings.model,
-                max_tokens=settings.max_tokens,
+                max_tokens=settings.max_output_tokens,
                 system=system,
                 messages=[{"role": m.role, "content": m.content} for m in messages],
             ) as stream:

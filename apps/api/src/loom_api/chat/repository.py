@@ -1,9 +1,12 @@
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from dataclasses import asdict
 from datetime import UTC, datetime
 from typing import Any, cast
 from uuid import UUID, uuid4
 
 from sqlalchemy import CursorResult, func, select, text, update
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from loom_api.chat.errors import ConversationNotFound
 from loom_api.chat.models import ConversationRow, MessageRow
@@ -12,6 +15,7 @@ from loom_api.chat.records import (
     ConversationRecord,
     FinalStatus,
     MessageRecord,
+    MessageRef,
     MessageStatus,
 )
 from loom_api.db import SessionFactory
@@ -48,6 +52,7 @@ def _to_message(row: MessageRow) -> MessageRecord:
         error_kind=cast(ErrorKind | None, row.error_kind),
         model=row.model,
         usage=Usage(**row.usage) if row.usage else None,
+        token_count=row.token_count,
         created_at=row.created_at,
         finished_at=row.finished_at,
     )
@@ -61,6 +66,85 @@ def _to_conversation(row: ConversationRow) -> ConversationRecord:
         created_at=row.created_at,
         updated_at=row.updated_at,
     )
+
+
+async def _message_refs(session: AsyncSession, conversation_id: UUID) -> list[MessageRef]:
+    rows = await session.execute(
+        select(MessageRow.id, MessageRow.parent_id, MessageRow.created_at)
+        .where(MessageRow.conversation_id == conversation_id)
+        .order_by(MessageRow.created_at, MessageRow.id)
+    )
+    return [MessageRef(id=r.id, parent_id=r.parent_id, created_at=r.created_at) for r in rows]
+
+
+class LockedConversation:
+    """A conversation row held FOR UPDATE until the `async with repo.locked(...)` block exits.
+
+    Everything done through it commits together at the end of that block. The service
+    decides what to insert; this class only knows how.
+    """
+
+    def __init__(self, session: AsyncSession, row: ConversationRow) -> None:
+        self._session = session
+        self._row = row
+
+    @property
+    def current_leaf_id(self) -> UUID | None:
+        return self._row.current_leaf_id
+
+    async def get_message(self, message_id: UUID) -> MessageRecord | None:
+        row = await self._session.scalar(
+            select(MessageRow).where(
+                MessageRow.conversation_id == self._row.id, MessageRow.id == message_id
+            )
+        )
+        return _to_message(row) if row else None
+
+    async def message_refs(self) -> list[MessageRef]:
+        return await _message_refs(self._session, self._row.id)
+
+    async def add_user_message(
+        self, *, parent_id: UUID | None, text_: str, token_count: int
+    ) -> MessageRecord:
+        now = datetime.now(UTC)
+        return await self._add(
+            MessageRow(
+                id=uuid4(),
+                conversation_id=self._row.id,
+                parent_id=parent_id,
+                role="user",
+                status="complete",
+                content=[{"type": "text", "text": text_}],
+                token_count=token_count,
+                created_at=now,
+                finished_at=now,
+            )
+        )
+
+    async def add_streaming_reply(self, *, parent_id: UUID, model: str) -> MessageRecord:
+        return await self._add(
+            MessageRow(
+                id=uuid4(),
+                conversation_id=self._row.id,
+                parent_id=parent_id,
+                role="assistant",
+                status="streaming",
+                content=[],
+                model=model,
+                created_at=datetime.now(UTC),
+            )
+        )
+
+    def set_leaf(self, message_id: UUID) -> None:
+        self._row.current_leaf_id = message_id
+
+    async def _add(self, row: MessageRow) -> MessageRecord:
+        self._session.add(row)
+        # Flush now: no ORM relationship is mapped, so the unit of work cannot know that a
+        # later row's parent_id points at this one and must be inserted first.
+        await self._session.flush()
+        self._row.updated_at = func.now()
+        return _to_message(row)
 
 
 class ChatRepository:
@@ -88,7 +172,7 @@ class ChatRepository:
             return _to_conversation(row) if row else None
 
     async def list_conversations(self, limit: int) -> list[ConversationRecord]:
-        """Most recently active first (a new turn bumps updated_at)."""
+        """Most recently active first (a new message bumps updated_at)."""
         async with self._session_factory() as session:
             rows = await session.scalars(
                 select(ConversationRow)
@@ -105,54 +189,27 @@ class ChatRepository:
             )
             return [_to_message(row) for row in result.scalars()]
 
-    async def start_turn(
-        self, conversation_id: UUID, text_: str, *, model: str
-    ) -> tuple[MessageRecord, MessageRecord]:
-        """Append a user message and an empty 'streaming' reply under the current leaf.
+    async def message_refs(self, conversation_id: UUID) -> list[MessageRef]:
+        """Every message's place in the tree, oldest first."""
+        async with self._session_factory() as session:
+            return await _message_refs(session, conversation_id)
 
-        The conversation row is locked FOR UPDATE, so two turns started at once queue here
-        and the second one chains onto the first one's reply instead of branching.
+    @asynccontextmanager
+    async def locked(self, conversation_id: UUID) -> AsyncIterator[LockedConversation]:
+        """Lock the conversation row FOR UPDATE for the block; commit when it exits.
+
+        Concurrent writers to the same conversation queue here, so each one sees the
+        previous one's current_leaf_id instead of both branching off the same message.
         """
-        now = datetime.now(UTC)
         async with self._session_factory.begin() as session:
-            conversation = await session.scalar(
+            row = await session.scalar(
                 select(ConversationRow)
                 .where(ConversationRow.id == conversation_id)
                 .with_for_update()
             )
-            if conversation is None:
+            if row is None:
                 raise ConversationNotFound(str(conversation_id))
-
-            user = MessageRow(
-                id=uuid4(),
-                conversation_id=conversation_id,
-                parent_id=conversation.current_leaf_id,
-                role="user",
-                status="complete",
-                content=[{"type": "text", "text": text_}],
-                created_at=now,
-                finished_at=now,
-            )
-            session.add(user)
-            # Flush before adding the reply: the unit of work doesn't know the reply's
-            # parent_id points at this row, so it must already be in the table.
-            await session.flush()
-            assistant = MessageRow(
-                id=uuid4(),
-                conversation_id=conversation_id,
-                parent_id=user.id,
-                role="assistant",
-                status="streaming",
-                content=[],
-                model=model,
-                created_at=now,
-            )
-            session.add(assistant)
-            await session.flush()
-
-            conversation.current_leaf_id = assistant.id
-            conversation.updated_at = func.now()
-            return _to_message(user), _to_message(assistant)
+            yield LockedConversation(session, row)
 
     async def finalize_assistant(
         self,
@@ -163,6 +220,7 @@ class ChatRepository:
         stop_reason: StopReason | None,
         error_kind: ErrorKind | None,
         usage: Usage | None,
+        token_count: int,
     ) -> bool:
         """Write the outcome of a streaming reply. False if it was no longer streaming.
 
@@ -179,6 +237,7 @@ class ChatRepository:
                     stop_reason=stop_reason,
                     error_kind=error_kind,
                     usage=asdict(usage) if usage else None,
+                    token_count=token_count,
                     finished_at=func.now(),
                 )
             )
@@ -190,6 +249,9 @@ class ChatRepository:
             result = await session.execute(
                 update(MessageRow)
                 .where(MessageRow.status == "streaming")
-                .values(status="error", error_kind="unexpected", finished_at=func.now())
+                # Content is only written at finalize, so a stuck row has none: 0 tokens.
+                .values(
+                    status="error", error_kind="unexpected", token_count=0, finished_at=func.now()
+                )
             )
             return cast(CursorResult[Any], result).rowcount

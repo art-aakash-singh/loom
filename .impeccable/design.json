@@ -1,0 +1,809 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-25T02:31:22+00:00",
+  "title": "Design System: Loom",
+  "extensions": {
+    "colorMeta": {
+      "indigo": {
+        "role": "secondary",
+        "displayName": "Warp Indigo",
+        "canonical": "#2f4a6b",
+        "tonalRamp": [
+          "#030b18",
+          "#162639",
+          "#2f435d",
+          "#496383",
+          "#6985a6",
+          "#90a7c5",
+          "#b7cbe4",
+          "#e0f0ff"
+        ]
+      },
+      "madder": {
+        "role": "primary",
+        "displayName": "Madder Weft",
+        "canonical": "#b04a2e",
+        "tonalRamp": [
+          "#210000",
+          "#470e00",
+          "#702612",
+          "#9d4027",
+          "#c36348",
+          "#e08c74",
+          "#fdb5a1",
+          "#ffdfcf"
+        ]
+      },
+      "madder-hover": {
+        "role": "primary",
+        "displayName": "Madder, Pressed Deeper",
+        "canonical": "#983d24",
+        "tonalRamp": [
+          "#1f0000",
+          "#441104",
+          "#6d2a18",
+          "#98442d",
+          "#be664e",
+          "#dc8e79",
+          "#f9b7a4",
+          "#ffe1d2"
+        ]
+      },
+      "on-madder": {
+        "role": "neutral",
+        "displayName": "On Madder",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "linen": {
+        "role": "neutral",
+        "displayName": "Linen",
+        "canonical": "#f1e9dc",
+        "tonalRamp": [
+          "#0d0b07",
+          "#28241e",
+          "#464139",
+          "#676056",
+          "#888177",
+          "#aaa49b",
+          "#cdc8c0",
+          "#f2eee7"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#f8f4ec",
+        "tonalRamp": [
+          "#0c0b09",
+          "#272521",
+          "#44423d",
+          "#64615b",
+          "#85827b",
+          "#a8a59f",
+          "#cbc9c4",
+          "#f0eeea"
+        ]
+      },
+      "paper-raised": {
+        "role": "neutral",
+        "displayName": "Paper, Raised",
+        "canonical": "#fffdf9",
+        "tonalRamp": [
+          "#0c0b0a",
+          "#262523",
+          "#43423f",
+          "#63615e",
+          "#84827f",
+          "#a6a5a2",
+          "#cac9c6",
+          "#efeeec"
+        ]
+      },
+      "paper-sunk": {
+        "role": "neutral",
+        "displayName": "Paper, Sunk",
+        "canonical": "#ede4d5",
+        "tonalRamp": [
+          "#0e0b06",
+          "#29241d",
+          "#474138",
+          "#676054",
+          "#898175",
+          "#aba499",
+          "#cec8bf",
+          "#f2eee6"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "#e0d5c3",
+        "tonalRamp": [
+          "#0e0b05",
+          "#29241c",
+          "#484135",
+          "#696051",
+          "#8a8172",
+          "#aca496",
+          "#cfc8bd",
+          "#f3eee5"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#2a2420",
+        "tonalRamp": [
+          "#0d0b09",
+          "#282422",
+          "#46413d",
+          "#66605b",
+          "#88817c",
+          "#aaa4a0",
+          "#cdc8c5",
+          "#f2edeb"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2",
+        "canonical": "#66594f",
+        "tonalRamp": [
+          "#0f0a07",
+          "#2b231e",
+          "#4a4038",
+          "#6b5f55",
+          "#8c8076",
+          "#aea39a",
+          "#d1c7c0",
+          "#f5ede7"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3",
+        "canonical": "#7a6c61",
+        "tonalRamp": [
+          "#0f0a06",
+          "#2b231e",
+          "#4a4038",
+          "#6b5e55",
+          "#8d7f75",
+          "#aea399",
+          "#d1c7bf",
+          "#f5ede7"
+        ]
+      },
+      "code-bg": {
+        "role": "neutral",
+        "displayName": "Code Ground",
+        "canonical": "#2a2420",
+        "tonalRamp": [
+          "#0d0b09",
+          "#282422",
+          "#46413d",
+          "#66605b",
+          "#88817c",
+          "#aaa4a0",
+          "#cdc8c5",
+          "#f2edeb"
+        ]
+      },
+      "code-ink": {
+        "role": "neutral",
+        "displayName": "Code Ink",
+        "canonical": "#ede4d6",
+        "tonalRamp": [
+          "#0e0b07",
+          "#29241e",
+          "#474138",
+          "#676055",
+          "#898175",
+          "#aba49a",
+          "#cec8c0",
+          "#f2eee7"
+        ]
+      },
+      "inline-code-bg": {
+        "role": "neutral",
+        "displayName": "Inline Code Ground",
+        "canonical": "#e9dfcf",
+        "tonalRamp": [
+          "#0e0b06",
+          "#29241d",
+          "#474137",
+          "#686053",
+          "#8a8174",
+          "#aba498",
+          "#cec8be",
+          "#f3eee6"
+        ]
+      },
+      "danger": {
+        "role": "error",
+        "displayName": "Danger",
+        "canonical": "#a3361d",
+        "tonalRamp": [
+          "#220000",
+          "#490a00",
+          "#732311",
+          "#a03c26",
+          "#c75f47",
+          "#e48973",
+          "#ffb3a0",
+          "#ffdece"
+        ]
+      },
+      "danger-bg": {
+        "role": "error",
+        "displayName": "Danger Ground",
+        "canonical": "#f6e3dc",
+        "tonalRamp": [
+          "#0f0a08",
+          "#2c2320",
+          "#4b3f3b",
+          "#6c5d58",
+          "#8e7e79",
+          "#b0a29c",
+          "#d2c6c2",
+          "#f6ece9"
+        ]
+      },
+      "side-bg": {
+        "role": "secondary",
+        "displayName": "Sidebar Indigo",
+        "canonical": "#2f4a6b",
+        "tonalRamp": [
+          "#030b18",
+          "#162639",
+          "#2f435d",
+          "#496383",
+          "#6985a6",
+          "#90a7c5",
+          "#b7cbe4",
+          "#e0f0ff"
+        ]
+      },
+      "side-ink": {
+        "role": "neutral",
+        "displayName": "Side Ink (Linen)",
+        "canonical": "#f1e9dc",
+        "tonalRamp": [
+          "#0d0b07",
+          "#28241e",
+          "#464139",
+          "#676056",
+          "#888177",
+          "#aaa49b",
+          "#cdc8c0",
+          "#f2eee7"
+        ]
+      },
+      "side-ink-2": {
+        "role": "neutral",
+        "displayName": "Side Ink 2",
+        "canonical": "#c3ccd8",
+        "tonalRamp": [
+          "#090b0f",
+          "#21252b",
+          "#3d424a",
+          "#5b626c",
+          "#7b838d",
+          "#9fa6af",
+          "#c4cad1",
+          "#eaeff5"
+        ]
+      },
+      "side-weft": {
+        "role": "primary",
+        "displayName": "Sidebar Weft",
+        "canonical": "#d7714f",
+        "tonalRamp": [
+          "#200000",
+          "#461000",
+          "#6f280e",
+          "#9b4223",
+          "#c16445",
+          "#df8d72",
+          "#fbb69f",
+          "#ffe0ce"
+        ]
+      },
+      "dark-madder": {
+        "role": "primary",
+        "displayName": "Madder Weft (dark)",
+        "canonical": "#d7714f",
+        "tonalRamp": [
+          "#200000",
+          "#461000",
+          "#6f280e",
+          "#9b4223",
+          "#c16445",
+          "#df8d72",
+          "#fbb69f",
+          "#ffe0ce"
+        ]
+      },
+      "dark-madder-hover": {
+        "role": "primary",
+        "displayName": "Madder, Pressed Deeper (dark)",
+        "canonical": "#e38766",
+        "tonalRamp": [
+          "#1e0100",
+          "#431402",
+          "#6b2d15",
+          "#95472a",
+          "#bb694b",
+          "#d99077",
+          "#f6b9a3",
+          "#ffe2d0"
+        ]
+      },
+      "dark-on-madder": {
+        "role": "neutral",
+        "displayName": "On Madder (dark)",
+        "canonical": "#1f1b18",
+        "tonalRamp": [
+          "#0d0b09",
+          "#272422",
+          "#45413f",
+          "#65605d",
+          "#86817e",
+          "#a8a4a1",
+          "#ccc8c6",
+          "#f1eeec"
+        ]
+      },
+      "dark-paper": {
+        "role": "neutral",
+        "displayName": "Paper (dark)",
+        "canonical": "#1f1b18",
+        "tonalRamp": [
+          "#0d0b09",
+          "#272422",
+          "#45413f",
+          "#65605d",
+          "#86817e",
+          "#a8a4a1",
+          "#ccc8c6",
+          "#f1eeec"
+        ]
+      },
+      "dark-paper-raised": {
+        "role": "neutral",
+        "displayName": "Paper, Raised (dark)",
+        "canonical": "#2a2420",
+        "tonalRamp": [
+          "#0d0b09",
+          "#282422",
+          "#46413d",
+          "#66605b",
+          "#88817c",
+          "#aaa4a0",
+          "#cdc8c5",
+          "#f2edeb"
+        ]
+      },
+      "dark-paper-sunk": {
+        "role": "neutral",
+        "displayName": "Paper, Sunk (dark)",
+        "canonical": "#2f2925",
+        "tonalRamp": [
+          "#0d0b09",
+          "#282422",
+          "#46413d",
+          "#66605c",
+          "#88817c",
+          "#aaa4a0",
+          "#cdc8c5",
+          "#f2eeeb"
+        ]
+      },
+      "dark-rule": {
+        "role": "neutral",
+        "displayName": "Rule (dark)",
+        "canonical": "#3b342e",
+        "tonalRamp": [
+          "#0d0b08",
+          "#282421",
+          "#46413c",
+          "#67605a",
+          "#88817a",
+          "#aaa49e",
+          "#cec8c3",
+          "#f2edea"
+        ]
+      },
+      "dark-ink": {
+        "role": "neutral",
+        "displayName": "Ink (dark)",
+        "canonical": "#ede4d6",
+        "tonalRamp": [
+          "#0e0b07",
+          "#29241e",
+          "#474138",
+          "#676055",
+          "#898175",
+          "#aba49a",
+          "#cec8c0",
+          "#f2eee7"
+        ]
+      },
+      "dark-ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2 (dark)",
+        "canonical": "#b6a99b",
+        "tonalRamp": [
+          "#0f0a06",
+          "#2a241d",
+          "#494037",
+          "#6a5f53",
+          "#8c8074",
+          "#ada398",
+          "#d0c8be",
+          "#f4ede6"
+        ]
+      },
+      "dark-ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3 (dark)",
+        "canonical": "#9c8f82",
+        "tonalRamp": [
+          "#0f0a06",
+          "#2a241d",
+          "#494037",
+          "#6a5f54",
+          "#8c8074",
+          "#ada399",
+          "#d0c7bf",
+          "#f4ede6"
+        ]
+      },
+      "dark-code-bg": {
+        "role": "neutral",
+        "displayName": "Code Ground (dark)",
+        "canonical": "#151210",
+        "tonalRamp": [
+          "#0c0b0a",
+          "#272523",
+          "#44413f",
+          "#64605e",
+          "#85817f",
+          "#a8a4a2",
+          "#cbc8c7",
+          "#f0eeec"
+        ]
+      },
+      "dark-inline-code-bg": {
+        "role": "neutral",
+        "displayName": "Inline Code Ground (dark)",
+        "canonical": "#38302a",
+        "tonalRamp": [
+          "#0e0a08",
+          "#292420",
+          "#47413c",
+          "#685f59",
+          "#89807a",
+          "#aba39e",
+          "#cec8c3",
+          "#f3ede9"
+        ]
+      },
+      "dark-danger": {
+        "role": "error",
+        "displayName": "Danger (dark)",
+        "canonical": "#f08f72",
+        "tonalRamp": [
+          "#1f0000",
+          "#441204",
+          "#6c2b17",
+          "#97462d",
+          "#bd674e",
+          "#db8f79",
+          "#f8b8a4",
+          "#ffe1d2"
+        ]
+      },
+      "dark-danger-bg": {
+        "role": "error",
+        "displayName": "Danger Ground (dark)",
+        "canonical": "#3a2620",
+        "tonalRamp": [
+          "#110907",
+          "#2e221e",
+          "#4e3e38",
+          "#715c55",
+          "#937c76",
+          "#b4a09a",
+          "#d6c5c0",
+          "#f9ebe7"
+        ]
+      },
+      "dark-side-bg": {
+        "role": "secondary",
+        "displayName": "Sidebar Indigo (dark)",
+        "canonical": "#1b2a3d",
+        "tonalRamp": [
+          "#060c13",
+          "#1c2632",
+          "#374353",
+          "#536377",
+          "#738499",
+          "#98a6b9",
+          "#becada",
+          "#e6effc"
+        ]
+      },
+      "dark-side-ink-2": {
+        "role": "neutral",
+        "displayName": "Side Ink 2 (dark)",
+        "canonical": "#aab6c5",
+        "tonalRamp": [
+          "#080b10",
+          "#20262d",
+          "#3b434d",
+          "#58626f",
+          "#798390",
+          "#9da6b2",
+          "#c2cad4",
+          "#e9eff7"
+        ]
+      },
+      "side-bg-hover": {
+        "role": "neutral",
+        "displayName": "Sidebar Hover Wash",
+        "canonical": "rgb(241 233 220 / 0.08)"
+      },
+      "side-bg-active": {
+        "role": "neutral",
+        "displayName": "Sidebar Selected Wash",
+        "canonical": "rgb(241 233 220 / 0.14)"
+      },
+      "side-rule": {
+        "role": "neutral",
+        "displayName": "Sidebar Rule",
+        "canonical": "rgb(241 233 220 / 0.18)"
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Empty-state greeting only."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Conversation title in the 56px title bar; weight, not size, carries it."
+      },
+      "prose": {
+        "displayName": "Prose",
+        "purpose": "Assistant replies rendered as Markdown; inner headings scale from it in em."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "App default: prompts, conversation items, composer. Tabular numerals on."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons (13.5px) and version tabs (13px; current tab 600)."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "Per-reply metadata line (model, tokens, stop reason) and edit hints."
+      },
+      "group-label": {
+        "displayName": "Group Label",
+        "purpose": "Date groups in the conversation list, sentence case."
+      },
+      "code": {
+        "displayName": "Code",
+        "purpose": "JetBrains Mono, only inside fenced and inline code."
+      }
+    },
+    "shadows": [
+      {
+        "name": "composer-lift",
+        "value": "0 2px 10px rgb(42 36 32 / 0.05)",
+        "purpose": "Ambient lift on the docked composer over the scrolled transcript."
+      },
+      {
+        "name": "drawer",
+        "value": "8px 0 40px rgb(20 24 32 / 0.25)",
+        "purpose": "The sidebar only, while open as the narrow-screen drawer."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "The single easing curve for every state transition."
+      },
+      {
+        "name": "duration-state",
+        "value": "150ms",
+        "purpose": "Colour, background and border changes on buttons, items, composer."
+      },
+      {
+        "name": "duration-thread",
+        "value": "200ms",
+        "purpose": "Tab underline colour and the selected-item padding opening for the weft tick."
+      },
+      {
+        "name": "duration-drawer",
+        "value": "220ms",
+        "purpose": "Sidebar drawer slide on narrow screens."
+      },
+      {
+        "name": "caret-blink",
+        "value": "1s steps(2, jump-none) infinite",
+        "purpose": "Madder block caret while a reply streams."
+      },
+      {
+        "name": "breathe",
+        "value": "1.6s ease-in-out infinite alternate (opacity 1 to 0.45)",
+        "purpose": "'Thinking' placeholder before the first token."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0ms",
+        "purpose": "All transitions and animations under prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "drawer",
+        "value": "860px",
+        "purpose": "At or below: sidebar becomes a drawer, stats and keyboard hint hidden, gutters drop to 16px."
+      }
+    ],
+    "focus": {
+      "value": "outline: 2px solid var(--focus); outline-offset: 2px",
+      "purpose": "Indigo on paper, linen on the sidebar and in dark mode. Version tabs inset the outline (-2px)."
+    },
+    "brandStatus": "provisional: the docs/logo identity is not binding (PRODUCT.md, Brand Commitments)"
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Madder action fill for Send and Save; at most one per region.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Save</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 0 12px; border: 1px solid transparent; border-radius: var(--radius-s, 6px); background: none; font: 500 13.5px var(--font-ui, 'Work Sans Variable', system-ui, sans-serif); cursor: pointer; transition: background-color 150ms cubic-bezier(0.16,1,0.3,1), color 150ms cubic-bezier(0.16,1,0.3,1), border-color 150ms cubic-bezier(0.16,1,0.3,1); } .ds-btn:focus-visible { outline: 2px solid var(--focus, #2f4a6b); outline-offset: 2px; } .ds-btn-primary { background: var(--madder, #b04a2e); color: var(--on-madder, #fff); } .ds-btn-primary:hover:not(:disabled) { background: var(--madder-hover, #983d24); } .ds-btn-primary:disabled { background: var(--bg-sunk, #ede4d5); color: var(--ink-3, #7a6c61); cursor: not-allowed; }"
+    },
+    {
+      "name": "Quiet Button",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "Default secondary action: Cancel, Edit, Regenerate, menu toggle.",
+      "html": "<button class=\"ds-btn-quiet\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/></svg>Regenerate</button>",
+      "css": ".ds-btn-quiet { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 1px solid transparent; border-radius: var(--radius-s, 6px); background: none; color: var(--ink-2, #66594f); font: 500 13.5px var(--font-ui, 'Work Sans Variable', system-ui, sans-serif); cursor: pointer; transition: background-color 150ms cubic-bezier(0.16,1,0.3,1), color 150ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-quiet:hover { background: var(--bg-sunk, #ede4d5); color: var(--ink, #2a2420); } .ds-btn-quiet:focus-visible { outline: 2px solid var(--focus, #2f4a6b); outline-offset: 2px; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Hairline-stroked action; used for Stop while a reply streams.",
+      "html": "<button class=\"ds-btn-outline\" aria-label=\"Stop\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/></svg></button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border: 1px solid var(--rule, #e0d5c3); border-radius: var(--radius-m, 10px); background: none; color: var(--ink, #2a2420); cursor: pointer; transition: background-color 150ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-outline:hover { background: var(--bg-sunk, #ede4d5); } .ds-btn-outline:focus-visible { outline: 2px solid var(--focus, #2f4a6b); outline-offset: 2px; }"
+    },
+    {
+      "name": "Composer",
+      "kind": "input",
+      "refersTo": "composer",
+      "description": "Docked raised input with autosizing textarea and madder icon Send.",
+      "html": "<form class=\"ds-composer\" onsubmit=\"return false\"><textarea rows=\"1\" placeholder=\"Message Loom\" aria-label=\"Message\"></textarea><button type=\"submit\" class=\"ds-composer-send\" aria-label=\"Send\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m5 12 7-7 7 7\"/><path d=\"M12 19V5\"/></svg></button></form>",
+      "css": ".ds-composer { display: flex; align-items: flex-end; gap: 10px; max-width: 720px; padding: 10px 10px 10px 16px; border: 1px solid var(--rule, #e0d5c3); border-radius: var(--radius-l, 14px); background: var(--bg-raised, #fffdf9); box-shadow: 0 2px 10px rgb(42 36 32 / 0.05); transition: border-color 150ms cubic-bezier(0.16,1,0.3,1); } .ds-composer:focus-within { border-color: var(--ink-3, #7a6c61); } .ds-composer textarea { flex: 1; min-height: 32px; padding: 5px 0; border: 0; background: none; resize: none; outline: none; font: 400 15px/1.45 var(--font-ui, 'Work Sans Variable', system-ui, sans-serif); color: var(--ink, #2a2420); caret-color: var(--madder, #b04a2e); } .ds-composer textarea::placeholder { color: var(--ink-3, #7a6c61); } .ds-composer-send { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 0; border-radius: var(--radius-m, 10px); background: var(--madder, #b04a2e); color: var(--on-madder, #fff); cursor: pointer; transition: background-color 150ms cubic-bezier(0.16,1,0.3,1); } .ds-composer-send:hover { background: var(--madder-hover, #983d24); } .ds-composer-send:focus-visible { outline: 2px solid var(--focus, #2f4a6b); outline-offset: 2px; }"
+    },
+    {
+      "name": "Version Tabs",
+      "kind": "custom",
+      "refersTo": "version-tab",
+      "description": "Signature: the branch point drawn above a turn with sibling versions; madder underline marks the current one.",
+      "html": "<div class=\"ds-vtabs\" role=\"group\" aria-label=\"Versions of this reply\"><button class=\"ds-vtab\">Reply 1</button><button class=\"ds-vtab\" aria-current=\"true\">Reply 2</button><button class=\"ds-vtab\">Reply 3</button></div>",
+      "css": ".ds-vtabs { display: flex; gap: 2px; border-bottom: 1px solid var(--rule, #e0d5c3); overflow-x: auto; scrollbar-width: none; } .ds-vtab { flex-shrink: 0; height: 34px; padding: 0 12px; margin-bottom: -1px; border: 0; border-bottom: 2px solid transparent; background: none; font: 500 13px var(--font-ui, 'Work Sans Variable', system-ui, sans-serif); color: var(--ink-2, #66594f); cursor: pointer; transition: color 150ms cubic-bezier(0.16,1,0.3,1), border-color 200ms cubic-bezier(0.16,1,0.3,1); } .ds-vtab:hover { color: var(--ink, #2a2420); border-bottom-color: var(--rule, #e0d5c3); } .ds-vtab[aria-current=\"true\"] { color: var(--ink, #2a2420); font-weight: 600; border-bottom-color: var(--madder, #b04a2e); cursor: default; } .ds-vtab:focus-visible { outline: 2px solid var(--focus, #2f4a6b); outline-offset: -2px; border-radius: 6px 6px 0 0; }"
+    },
+    {
+      "name": "Prompt Block and Reply",
+      "kind": "card",
+      "refersTo": "prompt-block",
+      "description": "User prompt as a sunk right-aligned block; reply as open prose with a quiet metadata line.",
+      "html": "<div class=\"ds-turn\"><div class=\"ds-prompt\"><div class=\"ds-bubble\">How does the context budget get spent?</div></div><div class=\"ds-reply\"><p>Loom fills the window from the newest turn backwards until the <a href=\"#\">budget</a> runs out.</p><div class=\"ds-meta\"><span>claude-opus</span><span>1,204 in · 312 out</span><span class=\"ds-flag\">stopped</span></div></div></div>",
+      "css": ".ds-turn { max-width: 720px; font: 400 15px/1.6 var(--font-ui, 'Work Sans Variable', system-ui, sans-serif); color: var(--ink, #2a2420); font-variant-numeric: tabular-nums; } .ds-prompt { display: flex; justify-content: flex-end; padding-left: 64px; } .ds-bubble { padding: 12px 16px; border-radius: var(--radius-l, 14px); background: var(--bg-sunk, #ede4d5); white-space: pre-wrap; } .ds-reply { margin-top: 28px; font-size: 16px; line-height: 1.7; } .ds-reply p { margin: 0; } .ds-reply a { color: var(--ink, #2a2420); text-decoration: underline; text-decoration-color: var(--madder, #b04a2e); text-underline-offset: 3px; } .ds-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; min-height: 32px; margin-top: 6px; font-size: 12.5px; line-height: 1.4; color: var(--ink-3, #7a6c61); } .ds-flag { padding: 2px 8px; border-radius: 999px; background: var(--bg-sunk, #ede4d5); color: var(--ink-2, #66594f); font-weight: 500; }"
+    },
+    {
+      "name": "Sidebar Navigation",
+      "kind": "nav",
+      "refersTo": "sidebar",
+      "description": "Indigo warp holding New conversation and the grouped list; the current item opens for a weft tick.",
+      "html": "<nav class=\"ds-side\" aria-label=\"Conversations\"><button class=\"ds-side-new\">New conversation</button><h2 class=\"ds-side-group\">Today</h2><button class=\"ds-side-item\" aria-current=\"true\">Context budgeting</button><button class=\"ds-side-item\">Streaming over SSE</button><button class=\"ds-side-item\">Message tree design</button></nav>",
+      "css": ".ds-side { display: flex; flex-direction: column; width: 272px; padding: 14px; background: var(--side-bg, #2f4a6b); color: var(--side-ink, #f1e9dc); font: 400 14px/1.6 var(--font-ui, 'Work Sans Variable', system-ui, sans-serif); --focus: var(--side-focus, #f1e9dc); } .ds-side-new { height: 40px; padding: 0 12px; margin-bottom: 10px; border: 1px solid rgb(241 233 220 / 0.18); border-radius: var(--radius-m, 10px); background: none; color: inherit; font-family: inherit; font-size: 14px; font-weight: 500; text-align: left; cursor: pointer; transition: background-color 150ms cubic-bezier(0.16,1,0.3,1); } .ds-side-new:hover { background: rgb(241 233 220 / 0.08); } .ds-side-group { margin: 10px 10px 4px; font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; color: var(--side-ink-2, #c3ccd8); } .ds-side-item { position: relative; display: block; width: 100%; padding: 7px 10px; border: 0; border-radius: var(--radius-s, 6px); background: none; text-align: left; font: inherit; color: var(--side-ink-2, #c3ccd8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; transition: background-color 150ms cubic-bezier(0.16,1,0.3,1), color 150ms cubic-bezier(0.16,1,0.3,1), padding-left 200ms cubic-bezier(0.16,1,0.3,1); } .ds-side-item:hover { background: rgb(241 233 220 / 0.08); color: var(--side-ink, #f1e9dc); } .ds-side-item[aria-current=\"true\"] { padding-left: 26px; background: rgb(241 233 220 / 0.14); color: var(--side-ink, #f1e9dc); font-weight: 500; } .ds-side-item[aria-current=\"true\"]::before { content: ''; position: absolute; left: 10px; top: 50%; width: 9px; height: 4px; margin-top: -2px; border-radius: 2px; background: var(--side-weft, #d7714f); } .ds-side button:focus-visible { outline: 2px solid #f1e9dc; outline-offset: 2px; }"
+    },
+    {
+      "name": "Error Notice",
+      "kind": "custom",
+      "refersTo": "error-notice",
+      "description": "Danger-ground panel in the dock above the composer.",
+      "html": "<div class=\"ds-error\" role=\"alert\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"12\" x2=\"12\" y1=\"8\" y2=\"12\"/><line x1=\"12\" x2=\"12.01\" y1=\"16\" y2=\"16\"/></svg><p>A reply is already being generated in this conversation.</p></div>",
+      "css": ".ds-error { display: flex; gap: 10px; align-items: flex-start; max-width: 720px; padding: 10px 14px; border-radius: var(--radius-m, 10px); background: var(--danger-bg, #f6e3dc); color: var(--danger, #a3361d); font: 400 14px/1.5 var(--font-ui, 'Work Sans Variable', system-ui, sans-serif); } .ds-error svg { flex-shrink: 0; margin-top: 2px; } .ds-error p { margin: 0; }"
+    },
+    {
+      "name": "Code Block",
+      "kind": "card",
+      "refersTo": "code-block",
+      "description": "Fenced code is always dark, in both themes, set in JetBrains Mono.",
+      "html": "<pre class=\"ds-code\"><code>budget = window - reserved_for_reply</code></pre>",
+      "css": ".ds-code { margin: 0; padding: 14px 16px; border-radius: var(--radius-m, 10px); background: var(--code-bg, #2a2420); color: var(--code-ink, #ede4d6); font: 400 13.5px/1.6 var(--font-code, 'JetBrains Mono Variable', ui-monospace, monospace); overflow-x: auto; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Working Loom",
+    "overview": "**Creative North Star: \"The Working Loom\"**\n\nLoom's interface is cloth on a frame. Indigo is the warp: it holds the whole sidebar, the fixed structure every conversation hangs from. Madder is the weft: a single thread that crosses the structure only where something is chosen or about to happen (the selected conversation, the current version, the Send action). Linen-tinted paper is the ground for reading, and Ink is the text. Nothing else is coloured.\n\nThe screen is a working tool, not a showcase. Density is calm desktop density: a fixed sidebar, a 56px title bar, and a single centred 720px reading column with the composer docked beneath it. Replies are full-width formatted prose; prompts sit as quiet sunk blocks offset to the right. The signature of the system is that structure is drawn where it happens: a turn with sibling versions carries a tab strip directly above it, so the message tree is legible in place.\n\nLight and dark are one world seen at different hours. Dark mode comes from the dark app icon: an ink ground, linen text, a deeper indigo sidebar, and a lighter madder that keeps its contrast on dark.",
+    "keyCharacteristics": [
+      "Two-colour structure: indigo shell, paper reading ground; madder only as the selection or action thread.",
+      "One sans family (Work Sans) for all UI and prose; JetBrains Mono only inside code.",
+      "Flat, tonal surfaces; depth comes from paper value steps, not shadows.",
+      "Branch points shown as tabs above the turn, never hidden behind arrows.",
+      "The woven mark is redrawn as SVG and takes its thread colours from CSS, so it re-weaves itself on every ground."
+    ],
+    "rules": [
+      {
+        "name": "The One Thread Rule",
+        "body": "Madder marks a choice or an action: what is selected, what is current, what will send. It is never a decorative fill, a heading colour, or a background wash. If removing the madder from an element would not change what the user can do or see as chosen, it should not be madder.",
+        "section": "colors"
+      },
+      {
+        "name": "The Warp Holds Rule",
+        "body": "Indigo is structure, not accent. It fills the sidebar and colours the mark; it does not appear as button fills, links, or highlights inside the reading pane. Focus rings on paper are indigo because focus is structural.",
+        "section": "colors"
+      },
+      {
+        "name": "The Thread Changes On Indigo Rule",
+        "body": "Any madder element placed on the indigo sidebar uses Sidebar Weft, never base Madder.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Family Rule",
+        "body": "Work Sans sets everything that is not code. Do not introduce a second sans, a serif for headings, or the mono for labels and numbers; tabular numerals in Work Sans already handle token counts.",
+        "section": "typography"
+      },
+      {
+        "name": "The Wordmark Is Not Type Rule",
+        "body": "The serif lowercase \"loom\" is an image (extracted from the primary lockup and applied as a CSS mask so it takes `currentColor`). Never set it, or any UI text, in a serif font.",
+        "section": "typography"
+      },
+      {
+        "name": "The Paper Steps Rule",
+        "body": "To separate a surface, step its paper value (sunk or raised) or draw a Rule. Reach for a shadow only when the surface genuinely floats over scrolling content.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** keep Madder to selection, current state, and the primary action (The One Thread Rule).",
+      "**Do** switch any madder element on the sidebar to Sidebar Weft.",
+      "**Do** separate surfaces by stepping paper value (sunk / raised) or a 1px Rule before reaching for a shadow.",
+      "**Do** draw tree structure where it happens: a version strip directly above the turn that branches.",
+      "**Do** set every non-code string in Work Sans; use the mono only for code.",
+      "**Do** use the shared button weights (primary, quiet, outline) at 32px rather than inventing new button styles.",
+      "**Do** honour `prefers-reduced-motion`: all transitions and animations drop to 0ms.",
+      "**Do** define every new colour as a token on `:root` with a dark-mode counterpart."
+    ],
+    "donts": [
+      "**Don't** use Indigo inside the reading pane as an accent, link, or button fill.",
+      "**Don't** put base Madder on Indigo; it falls below legible contrast there.",
+      "**Don't** hide branch points behind small \"2/3\" arrows under a message.",
+      "**Don't** set the wordmark, or any UI text, in a serif face.",
+      "**Don't** box assistant replies in bubbles; replies are open prose on paper.",
+      "**Don't** treat this palette or mark as final; the brand is provisional (see the note at the top)."
+    ]
+  }
+}

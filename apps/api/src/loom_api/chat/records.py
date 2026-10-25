@@ -39,5 +39,15 @@ class MessageRecord:
     error_kind: ErrorKind | None
     model: str | None
     usage: Usage | None
+    token_count: int | None  # None only while streaming
     created_at: datetime
     finished_at: datetime | None
+
+
+@dataclass(frozen=True)
+class MessageRef:
+    """Just enough of a message to place it in the tree."""
+
+    id: UUID
+    parent_id: UUID | None
+    created_at: datetime

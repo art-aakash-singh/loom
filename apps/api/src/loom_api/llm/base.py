@@ -11,3 +11,7 @@ class LLMProvider(Protocol):
         messages: Sequence[Message],
         settings: GenerationSettings,
     ) -> AsyncGenerator[StreamEvent]: ...
+
+    def estimate_tokens(self, text: str) -> int:
+        """Token count of `text` for this provider's model, without calling it."""
+        ...

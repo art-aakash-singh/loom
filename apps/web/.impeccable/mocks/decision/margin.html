@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}
+:root{--indigo:#2F4A6B;--indigo-2:#3A5878;--linen:#F1E9DC;--paper:#F8F4EC;--linen-2:#E9DFCF;--rule:#DDD1BE;--ink:#2A2420;--ink-2:#6E6259;--madder:#B04A2E}
+html,body{width:1440px;height:900px;overflow:hidden}
+body{font:15px/1.6 "Work Sans",system-ui,sans-serif;color:var(--ink);background:var(--paper);display:flex}
+.side{width:264px;flex-shrink:0;background:var(--indigo);color:var(--linen);display:flex;flex-direction:column;padding:20px 12px}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 10px 22px}
+.brand b{font:700 26px/1 "Fraunces",Georgia,serif;letter-spacing:-.01em}
+.new{display:flex;align-items:center;gap:8px;border:1px solid rgba(241,233,220,.28);border-radius:8px;padding:9px 12px;color:var(--linen);font-weight:500;margin:0 0 18px}
+.lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.6;padding:0 10px 6px}
+.conv{padding:8px 10px;border-radius:6px;font-size:14px;color:rgba(241,233,220,.82);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}
+.conv.on{background:rgba(241,233,220,.12);color:#fff}
+.conv.on:before{content:"";position:absolute;left:-12px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--madder)}
+.foot{margin-top:auto;font-size:12px;opacity:.7;padding:0 10px;display:flex;align-items:center;gap:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:#7FB38A}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.top{height:60px;border-bottom:1px solid var(--rule);display:flex;align-items:center;padding:0 32px;gap:12px}
+.top h1{font-size:16px;font-weight:600}
+.top span{font-size:13px;color:var(--ink-2)}
+.meta{font-size:12.5px;color:var(--ink-2);display:flex;gap:14px;align-items:center;font-variant-numeric:tabular-nums}
+.meta .act{color:var(--ink);font-weight:500}
+.ver{display:inline-flex;align-items:center;gap:6px;color:var(--ink)}
+.ver i{font-style:normal;color:var(--ink-2)}
+.reply p{margin:0 0 12px}
+.reply code{font:13px "JetBrains Mono",ui-monospace,monospace;background:var(--linen-2);padding:1px 5px;border-radius:4px}
+.reply pre{font:13px/1.55 "JetBrains Mono",ui-monospace,monospace;background:#2A2420;color:#EDE4D6;padding:14px 16px;border-radius:8px;margin:0 0 12px}
+.composer{border:1px solid var(--rule);background:#fff;border-radius:12px;padding:14px 14px 14px 18px;display:flex;align-items:flex-end;gap:12px;box-shadow:0 1px 0 rgba(42,36,32,.04)}
+.composer div{flex:1;color:var(--ink-2)}
+.send{background:var(--madder);color:#fff;border-radius:8px;padding:8px 16px;font-weight:600;font-size:14px}
+
+.tx{flex:1;overflow:hidden;padding:36px 32px 0}
+.turn{display:grid;grid-template-columns:240px 680px;column-gap:40px;margin-bottom:34px}
+.p{font-size:14px;color:var(--ink-2);border-right:2px solid var(--madder);padding-right:18px;text-align:right;align-self:start;line-height:1.55}
+.p small{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--madder);font-weight:600;margin-bottom:4px}
+.p .e{display:block;margin-top:8px;font-size:12px;color:var(--ink)}
+.reply{font-size:16px;line-height:1.65}
+.dock{padding:12px 32px 24px;display:grid;grid-template-columns:240px 680px;column-gap:40px}
+</style></head><body><aside class="side"><div class="brand"><svg width="26" height="26" viewBox="-6 -6 236 236" aria-hidden="true"><g stroke="var(--indigo,#2F4A6B)" stroke-width="0"><rect x="0" y="42" width="224" height="28" rx="14" fill="#D7714F"/><rect x="0" y="98" width="224" height="28" rx="14" fill="#D7714F"/><rect x="0" y="154" width="224" height="28" rx="14" fill="#D7714F"/></g><g stroke="#2F4A6B" stroke-width="8"><rect x="42" y="0" width="28" height="224" rx="14" fill="#F1E9DC"/><rect x="98" y="0" width="28" height="224" rx="14" fill="#F1E9DC"/><rect x="154" y="0" width="28" height="224" rx="14" fill="#F1E9DC"/><rect x="92" y="42" width="40" height="28" fill="#D7714F"/><rect x="92" y="154" width="40" height="28" fill="#D7714F"/><rect x="36" y="98" width="40" height="28" fill="#D7714F"/><rect x="148" y="98" width="40" height="28" fill="#D7714F"/></g></svg><b>loom</b></div><div class="new">+ New conversation</div><div class="lbl">Recent</div><div class="conv on">Postgres: index scan vs seq scan</div><div class="conv">Redis streams or pub/sub for SSE fan-out</div><div class="conv">FastAPI Depends vs Nest providers</div><div class="conv">Untitled</div><div class="conv">Lisbon in March, 4 days</div><div class="conv">Explain prompt caching breakpoints</div><div class="conv">uv workspaces, one lockfile?</div><div class="foot"><span class="dot"></span>API ok</div></aside>
+<main class="main"><div class="top"><h1>Postgres: index scan vs seq scan</h1><span>4 turns · 2,915 tokens</span></div>
+<div class="tx">
+<div class="turn"><div class="p"><small>You</small>Why does Postgres ignore my index on <code>messages.conversation_id</code> and do a seq scan instead? The table has about 40k rows.<span class="e">Edit · <span class="ver">‹ <i>2 / 3</i> ›</span></span></div><div class="reply"><p>Postgres estimates the cost of each plan from table statistics. When a predicate matches a large fraction of rows, a sequential scan wins: reading pages in order is cheaper than jumping between the index and the heap.</p><p>Check what the planner believed with:</p><pre>EXPLAIN (ANALYZE, BUFFERS)
+SELECT * FROM messages WHERE conversation_id = $1;</pre><p>If <code>rows=</code> in the estimate is far from the actual count, run <code>ANALYZE messages</code> or raise the statistics target on that column.</p><div class="meta"><span>claude-sonnet-5-5</span><span>1,284 in → 612 out</span><span>complete</span><span class="act">Regenerate</span></div></div></div>
+<div class="turn"><div class="p"><small>You</small>Would a composite index with created_at help the history query?<span class="e">Edit</span></div><div class="reply"><p>Yes. A composite index on <code>(conversation_id, created_at)</code> lets Postgres read one conversation in order without a sort, and it stays selective as the table grows.</p></div></div>
+</div><div class="dock"><div></div><div class="composer"><div>Message Loom…</div><span class="send">Send</span></div></div></main></body></html>

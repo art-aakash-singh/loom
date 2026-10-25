@@ -210,6 +210,103 @@
             "description": "A reply is still generating for this conversation"
           },
           "422": {
+            "description": "parent_id must be an assistant message of this conversation, or null"
+          }
+        }
+      }
+    },
+    "/conversations/{conversation_id}/messages/{user_message_id}/regenerate": {
+      "post": {
+        "tags": [
+          "conversations"
+        ],
+        "summary": "Regenerate",
+        "operationId": "regenerateMessage",
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Conversation Id"
+            }
+          },
+          {
+            "name": "user_message_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "User Message Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SSE event stream",
+            "content": {
+              "text/event-stream": {}
+            }
+          },
+          "404": {
+            "description": "Message not found in this conversation"
+          },
+          "409": {
+            "description": "A reply is still generating for this conversation"
+          },
+          "422": {
+            "description": "Only a user message can be regenerated"
+          }
+        }
+      }
+    },
+    "/conversations/{conversation_id}/leaf": {
+      "put": {
+        "tags": [
+          "conversations"
+        ],
+        "summary": "Switch Branch",
+        "operationId": "switchBranch",
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Conversation Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SwitchLeafRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationDetailOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Message not found in this conversation"
+          },
+          "422": {
             "description": "Validation Error",
             "content": {
               "application/json": {
@@ -498,6 +595,17 @@
               }
             ]
           },
+          "token_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Token Count"
+          },
           "created_at": {
             "type": "string",
             "format": "date-time",
@@ -514,6 +622,14 @@
               }
             ],
             "title": "Finished At"
+          },
+          "sibling_ids": {
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "type": "array",
+            "title": "Sibling Ids"
           }
         },
         "type": "object",
@@ -527,8 +643,10 @@
           "error_kind",
           "model",
           "usage",
+          "token_count",
           "created_at",
-          "finished_at"
+          "finished_at",
+          "sibling_ids"
         ],
         "title": "MessageOut"
       },
@@ -538,6 +656,19 @@
             "type": "string",
             "minLength": 1,
             "title": "Text"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id",
+            "description": "Omit to continue from the current leaf. To edit a message, pass that message's parent_id: an assistant message id, or null when editing the first message."
           }
         },
         "type": "object",
@@ -545,6 +676,20 @@
           "text"
         ],
         "title": "SendMessageRequest"
+      },
+      "SwitchLeafRequest": {
+        "properties": {
+          "message_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Message Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message_id"
+        ],
+        "title": "SwitchLeafRequest"
       },
       "UsageOut": {
         "properties": {

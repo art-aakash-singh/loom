@@ -30,10 +30,11 @@ async def add_message(
                 """
                 INSERT INTO messages
                     (id, conversation_id, parent_id, role, status, stop_reason, error_kind,
-                     created_at, finished_at)
+                     token_count, created_at, finished_at)
                 VALUES
-                    (:id, :cid, :parent_id, :role, :status, :stop_reason, :error_kind, now(),
-                     CASE WHEN :status = 'streaming' THEN NULL ELSE now() END)
+                    (:id, :cid, :parent_id, :role, :status, :stop_reason, :error_kind,
+                     CASE WHEN :status = 'streaming' THEN NULL ELSE 1 END,
+                     now(), CASE WHEN :status = 'streaming' THEN NULL ELSE now() END)
                 """
             ),
             {
@@ -93,25 +94,26 @@ async def test_error_message_without_error_kind_is_rejected(engine: AsyncEngine)
         await add_message(engine, cid, parent_id=user, role="assistant", status="error")
 
 
-async def test_second_root_is_rejected(engine: AsyncEngine) -> None:
-    cid = await add_conversation(engine)
-    await add_message(engine, cid)
-
-    with pytest.raises(IntegrityError, match="one_root_per_conversation"):
-        await add_message(engine, cid)
-
-
-async def test_second_child_is_rejected(engine: AsyncEngine) -> None:
+async def test_siblings_and_multiple_roots_are_accepted(engine: AsyncEngine) -> None:
+    """M5: edits and regenerations branch, so a parent (or the root level) has many children."""
     cid = await add_conversation(engine)
     user = await add_message(engine, cid)
-    await add_message(
-        engine, cid, parent_id=user, role="assistant", status="complete", stop_reason="complete"
-    )
-
-    with pytest.raises(IntegrityError, match="one_child_per_parent"):
+    await add_message(engine, cid)  # edited first message: a second root
+    for _ in range(2):  # regenerated reply: a second child
         await add_message(
             engine, cid, parent_id=user, role="assistant", status="complete", stop_reason="complete"
         )
+
+
+async def test_finished_message_without_token_count_is_rejected(engine: AsyncEngine) -> None:
+    cid = await add_conversation(engine)
+    mid = await add_message(engine, cid)
+
+    with pytest.raises(IntegrityError, match="messages_token_count_iff_not_streaming"):
+        async with engine.begin() as conn:
+            await conn.execute(
+                text("UPDATE messages SET token_count = NULL WHERE id = :id"), {"id": mid}
+            )
 
 
 async def test_parent_in_another_conversation_is_rejected(engine: AsyncEngine) -> None:

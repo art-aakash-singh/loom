@@ -50,5 +50,6 @@ class MessageRow(Base):
     error_kind: Mapped[str | None] = mapped_column(Text)
     model: Mapped[str | None] = mapped_column(Text)
     usage: Mapped[dict[str, int] | None] = mapped_column(JSONB)
+    token_count: Mapped[int | None] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True))
     finished_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True))

@@ -8,9 +8,9 @@ from redis.asyncio import Redis
 from loom_api.chat import router as chat
 from loom_api.chat.lock import GenerationLock
 from loom_api.chat.repository import ChatRepository
-from loom_api.chat.schemas import ConcreteGenerationSettings
 from loom_api.chat.service import ChatService
 from loom_api.config import settings
+from loom_api.context.types import GenerationSettings
 from loom_api.db import create_engine, create_session_factory
 from loom_api.deps import build_provider
 from loom_api.routers import health
@@ -24,8 +24,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         repo=ChatRepository(create_session_factory(engine)),
         lock=GenerationLock(redis, ttl_s=settings.generation_lock_ttl_s),
         provider=build_provider(settings),
-        settings=ConcreteGenerationSettings(
-            model=settings.llm_model, max_tokens=settings.llm_max_tokens
+        settings=GenerationSettings(
+            model=settings.llm_model,
+            max_output_tokens=settings.llm_max_tokens,
+            context_window=settings.context_window,
         ),
     )
     await chat_service.sweep_interrupted_generations()

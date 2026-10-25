@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
@@ -20,6 +19,17 @@ class CreateConversationRequest(BaseModel):
 
 class SendMessageRequest(BaseModel):
     text: str = Field(min_length=1)
+    parent_id: UUID | None = Field(
+        default=None,
+        description=(
+            "Omit to continue from the current leaf. To edit a message, pass that message's "
+            "parent_id: an assistant message id, or null when editing the first message."
+        ),
+    )
+
+
+class SwitchLeafRequest(BaseModel):
+    message_id: UUID
 
 
 class UsageOut(BaseModel):
@@ -35,8 +45,6 @@ class ContentBlockOut(BaseModel):
 
 
 class MessageOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
     id: UUID
     parent_id: UUID | None
     role: Role
@@ -46,8 +54,11 @@ class MessageOut(BaseModel):
     error_kind: ErrorKind | None
     model: str | None
     usage: UsageOut | None
+    token_count: int | None
     created_at: datetime
     finished_at: datetime | None
+    # Every message sharing this one's parent, itself included, oldest first.
+    sibling_ids: list[UUID]
 
 
 class ConversationOut(BaseModel):
@@ -94,9 +105,3 @@ ChatEvent = Annotated[
     TurnStartedEvent | TextDeltaEvent | MessageEndEvent | ErrorEvent,
     Field(discriminator="type"),
 ]
-
-
-@dataclass(frozen=True)
-class ConcreteGenerationSettings:
-    model: str
-    max_tokens: int

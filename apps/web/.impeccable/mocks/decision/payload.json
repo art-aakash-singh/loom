@@ -1,0 +1,46 @@
+{
+  "title": "Choose the chat screen's structure",
+  "question": "Three layouts for conversations + chat, all in Loom's palette (indigo warp, madder weft, linen ground). Lock one, steer, or re-roll.",
+  "options": [
+    {
+      "id": "margin",
+      "kind": "assigned",
+      "kicker": "THE ROLL",
+      "label": "Prompts in the margin",
+      "thesis": "Your prompts sit in a narrow left margin beside the reply they produced, so the reply owns the full reading measure.",
+      "palette": ["#2F4A6B", "#F1E9DC", "#B04A2E", "#2A2420"],
+      "materials": ["indigo conversation rail", "manuscript margin notes", "madder thread joining prompt to reply"],
+      "viewport": "Indigo sidebar left; transcript as two columns, prompts at 240px in the margin, replies at 68ch; composer docked bottom under the reply column.",
+      "risk": "Long prompts get tall in a narrow margin; edits happen in a cramped column.",
+      "html": ".impeccable/mocks/decision/margin.html",
+      "wireframe": {"cols":12,"rows":10,"regions":[{"label":"conversations","x":0,"y":0,"w":2,"h":10,"accent":true},{"label":"prompt margin","x":2,"y":0,"w":3,"h":8},{"label":"replies","x":5,"y":0,"w":6,"h":8},{"label":"composer","x":5,"y":8,"w":6,"h":2}]}
+    },
+    {
+      "id": "weave-rail",
+      "kind": "dealt",
+      "label": "Familiar column + weave rail",
+      "thesis": "The chat layout everyone knows, plus a thin right rail that draws the conversation as warp and weft: one mark per turn, branch points visible at a glance.",
+      "palette": ["#2F4A6B", "#F1E9DC", "#B04A2E", "#2A2420"],
+      "materials": ["indigo conversation rail", "centered reading column", "woven turn map"],
+      "viewport": "Indigo sidebar left; centered 720px column with user turns as linen-dark blocks; 56px weave rail right; composer docked bottom.",
+      "risk": "The rail is new vocabulary; it has to earn its width by being clickable navigation, not decoration.",
+      "html": ".impeccable/mocks/decision/weave-rail.html",
+      "wireframe": {"cols":12,"rows":10,"regions":[{"label":"conversations","x":0,"y":0,"w":2,"h":10,"accent":true},{"label":"transcript","x":3,"y":0,"w":7,"h":8},{"label":"composer","x":3,"y":8,"w":7,"h":2},{"label":"weave rail","x":11,"y":0,"w":1,"h":10}]}
+    },
+    {
+      "id": "inspector",
+      "kind": "dealt",
+      "label": "Three panes with inspector",
+      "thesis": "Conversations, transcript, and an inspector that shows the machinery of the selected turn: model, tokens, stop reason, versions.",
+      "palette": ["#2F4A6B", "#F1E9DC", "#B04A2E", "#2A2420"],
+      "materials": ["indigo conversation rail", "transcript", "turn inspector with token bar"],
+      "viewport": "Indigo sidebar left; transcript center; 300px inspector right showing the selected reply's model, input/output tokens, stop reason and sibling versions.",
+      "risk": "Inspector shows only per-message data today; the real context/budget view needs API work, so it may feel thin until then.",
+      "html": ".impeccable/mocks/decision/inspector.html",
+      "wireframe": {"cols":12,"rows":10,"regions":[{"label":"conversations","x":0,"y":0,"w":2,"h":10,"accent":true},{"label":"transcript","x":2,"y":0,"w":7,"h":8},{"label":"composer","x":2,"y":8,"w":7,"h":2},{"label":"inspector","x":9,"y":0,"w":3,"h":10}]}
+    }
+  ],
+  "reroll": true,
+  "steer": true,
+  "buildPath": {"value": "code"}
+}

@@ -27,12 +27,32 @@ class Settings(BaseSettings):
     fake_delay_s: float = Field(default=0.05, ge=0)
     llm_model: str = "claude-sonnet-5-5"
     llm_max_tokens: int = 1024
+    # Input + output tokens per model. LOOM_LLM_CONTEXT_WINDOWS='{"model": n}' overrides it,
+    # e.g. a tiny window to exercise the too-large path with the fake provider.
+    llm_context_windows: dict[str, int] = {
+        "claude-sonnet-5-5": 1_000_000,
+        "claude-opus-5-5": 1_000_000,
+        "claude-haiku-5-5": 1_000_000,
+    }
 
     @model_validator(mode="after")
     def _require_key_for_anthropic(self) -> Self:
         if self.llm_provider == "anthropic" and self.anthropic_api_key is None:
             raise ValueError("LOOM_ANTHROPIC_API_KEY is required when LOOM_LLM_PROVIDER=anthropic")
         return self
+
+    @model_validator(mode="after")
+    def _require_context_window_for_model(self) -> Self:
+        if self.llm_model not in self.llm_context_windows:
+            raise ValueError(
+                f"No context window configured for LOOM_LLM_MODEL={self.llm_model!r}; "
+                "add it to LOOM_LLM_CONTEXT_WINDOWS"
+            )
+        return self
+
+    @property
+    def context_window(self) -> int:
+        return self.llm_context_windows[self.llm_model]
 
 
 settings = Settings()

@@ -1,0 +1,72 @@
+{
+ "title": "Choose the chat screen's structure",
+ "question": "Fresh hand, same Loom palette. Lock one, steer, or re-roll.",
+ "options": [
+  {
+   "id": "rail-drawer",
+   "kind": "assigned",
+   "kicker": "THE ROLL",
+   "label": "Icon rail + conversation drawer",
+   "thesis": "A 64px indigo rail holds the mark and actions; conversations live in a drawer grouped by day, so the transcript gets a wide 760px measure when the drawer is closed.",
+   "palette": [
+    "#2F4A6B",
+    "#F1E9DC",
+    "#B04A2E",
+    "#2A2420"
+   ],
+   "materials": [
+    "indigo rail",
+    "day-grouped drawer with search",
+    "wide reading column"
+   ],
+   "viewport": "Rail left, drawer open beside it (closable), transcript centered at 760px, composer docked bottom.",
+   "risk": "Switching conversations costs a click to open the drawer.",
+   "html": ".impeccable/mocks/decision/rail-drawer.html"
+  },
+  {
+   "id": "ledger",
+   "kind": "dealt",
+   "label": "Turn ledger",
+   "thesis": "The transcript reads like a ledger: a left gutter numbers every turn and shows its token count and version, so the machinery is visible line by line.",
+   "palette": [
+    "#2F4A6B",
+    "#F1E9DC",
+    "#B04A2E",
+    "#2A2420"
+   ],
+   "materials": [
+    "numbered turn gutter",
+    "hairline turn rules",
+    "tabular token counts"
+   ],
+   "viewport": "Indigo sidebar left; transcript rows with an 88px gutter (turn number, role, tokens, version) and 720px content; composer docked under the content column.",
+   "risk": "Denser and less conversational than chat users expect; no bubbles to tell speakers apart at a glance.",
+   "html": ".impeccable/mocks/decision/ledger.html"
+  },
+  {
+   "id": "version-tabs",
+   "kind": "dealt",
+   "label": "Versions as tabs",
+   "thesis": "Where you edited a prompt, its versions sit as tabs directly above that turn, making the message tree's branch points obvious and one click to switch.",
+   "palette": [
+    "#2F4A6B",
+    "#F1E9DC",
+    "#B04A2E",
+    "#2A2420"
+   ],
+   "materials": [
+    "indigo sidebar",
+    "inline version tabs with madder underline",
+    "centered column"
+   ],
+   "viewport": "Indigo sidebar left; centered 720px column; a tab strip above any turn with siblings; composer docked bottom.",
+   "risk": "Tabs repeat wherever branching happened; long conversations with many edits get noisy.",
+   "html": ".impeccable/mocks/decision/version-tabs.html"
+  }
+ ],
+ "reroll": true,
+ "steer": true,
+ "buildPath": {
+  "value": "code"
+ }
+}
